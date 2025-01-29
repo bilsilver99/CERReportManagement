@@ -97,3 +97,27 @@ app.post("/generate-excel", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+app.get("/get-user-company", async (req, res) => {
+  try {
+    // Ensure the db3 pool is initialized
+    if (!pools.db3) {
+      return res.status(500).send("Database connection is not initialized.");
+    }
+
+    // Define the query for UserCompany
+    const query = `
+      SELECT [FineUserID], [CompID], [CompName], [CompShort], [DefaultComp]
+      FROM [reporting].[dbo].[UserCompany]
+    `;
+
+    // Execute the query on the db3 pool
+    const result = await pools.db3.request().query(query);
+
+    // Send the result as JSON
+    res.json(result.recordset);
+  } catch (error) {
+    console.error("Error querying UserCompany:", error);
+    res.status(500).send("An error occurred while querying the database.");
+  }
+});

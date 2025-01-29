@@ -16,17 +16,28 @@ import DataGrid, {
 } from "devextreme-react/data-grid";
 import { useAuth } from "../../contexts/auth";
 import { UpdateUserCompany } from "./userCompanydata";
+import axios from "axios";
 
 const UserCompanyx = ({ companyCode, administrator }) => {
-  //const [databaseNamesStore, setdatabaseNamesStore] = useState(null);
+  const [userOptions, setUserOptions] = useState([]);
 
-  // useEffect(() => {
-  //   // if (companyCode) {
-  //   const store = UpdateUserCompany();
-  //   setdatabaseNamesStore(store);
-  //   // }
-  // }, []);
+  useEffect(() => {
+    const fetchUserOptions = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/get-user-company"
+        );
+        setUserOptions(response.data); // Set the options for FINEUSERID dropdown
+      } catch (error) {
+        console.error("Error fetching FINEUSERID options:", error);
+      }
+    };
+    fetchUserOptions();
+  }, []);
 
+  useEffect(() => {
+    console.log("user options are: ", userOptions);
+  }, [userOptions]);
   return (
     <div className="content-block dx-card responsive-paddings">
       <DataGrid
@@ -40,13 +51,22 @@ const UserCompanyx = ({ companyCode, administrator }) => {
         <Paging enabled={true} />
         <Editing
           mode="cell"
-          allowUpdating={false}
+          allowUpdating={true}
           allowAdding={true}
           allowDeleting={true}
         />
         <Column dataField="UNIQUEID" allowEditing={false} visible={true} />
-        <Column dataField="FINEUSERID" caption="User " />
-        <Column dataField="COMPID" caption="Comp ID" />
+        <Column
+          dataField="FINEUSERID"
+          isrequired={true}
+          caption="User"
+          lookup={{
+            dataSource: userOptions,
+            valueExpr: "FineUserID",
+            displayExpr: "FineUserID",
+          }}
+        />
+        <Column dataField="COMPID" caption="Comp ID" isrequired={true} />
         <Column dataField="COMPNAME" caption="Comp Name" />
         <Column dataField="COMPSHORT" caption="Comp Short" />
         <Column dataField="DEFAULTCOMP" caption="Default Comp" />
