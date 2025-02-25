@@ -9,17 +9,17 @@ export const navigation = [
     icon: "home",
   },
   { text: "Database Names", path: "/databaseNames", auth: "Y", icon: "group" },
-  {
-    text: "Report Structures",
-    path: "/reportStructures",
-    auth: "Y",
-    icon: "globe",
-  },
-  {
-    text: "Master Calendar",
-    path: "/masterCalendar",
-    auth: "Y",
-    icon: "chart",
-  },
+  // {
+  //   text: "Report Structures",
+  //   path: "/reportStructures",
+  //   auth: "Y",
+  //   icon: "globe",
+  // },
+  // {
+  //   text: "Master Calendar",
+  //   path: "/masterCalendar",
+  //   auth: "Y",
+  //   icon: "chart",
+  // },
   { text: "User Company", path: "/userCompany", auth: "Y", icon: "user" },
 ];

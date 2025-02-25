@@ -100,6 +100,30 @@ app.listen(port, () => {
 
 app.get("/get-user-company", async (req, res) => {
   try {
+    // Ensure the db1 pool is initialized
+    if (!pools.db1) {
+      return res.status(500).send("Database connection is not initialized.");
+    }
+
+    // Define the query for UserCompany
+    const query = `
+      SELECT DISTINCT LTRIM(RTRIM([FineUserID])) AS FineUserID
+      FROM [reporting].[dbo].[UserCompany]
+
+    `;
+    // Execute the query on the db3 pool
+    const result = await pools.db3.request().query(query);
+
+    // Send the result as JSON
+    res.json(result.recordset);
+  } catch (error) {
+    console.error("Error querying UserCompany:", error);
+    res.status(500).send("An error occurred while querying the database.");
+  }
+});
+
+app.get("/get-user-company-old", async (req, res) => {
+  try {
     // Ensure the db3 pool is initialized
     if (!pools.db3) {
       return res.status(500).send("Database connection is not initialized.");
@@ -111,6 +135,69 @@ app.get("/get-user-company", async (req, res) => {
       FROM [reporting].[dbo].[UserCompany]
     `;
 
+    // Execute the query on the db3 pool
+    const result = await pools.db3.request().query(query);
+
+    // Send the result as JSON
+    res.json(result.recordset);
+  } catch (error) {
+    console.error("Error querying UserCompany:", error);
+    res.status(500).send("An error occurred while querying the database.");
+  }
+});
+
+app.get("/get-companies", async (req, res) => {
+  try {
+    if (!pools.db3) {
+      return res.status(500).send("Database connection is not initialized.");
+    }
+    // Query for distinct company numbers and names.
+    const query = `
+      select company,name from erp.Company
+    `;
+    const result = await pools.db3.request().query(query);
+    res.json(result.recordset);
+  } catch (error) {
+    console.error("Error querying companies:", error);
+    res.status(500).send("An error occurred while querying the companies.");
+  }
+});
+
+app.get("/get-companies-old", async (req, res) => {
+  try {
+    if (!pools.db3) {
+      return res.status(500).send("Database connection is not initialized.");
+    }
+    // Query for distinct company numbers and names.
+    const query = `
+      SELECT DISTINCT [CompID], [CompName]
+      FROM [reporting].[dbo].[UserCompany]
+      ORDER BY [CompID]
+    `;
+    const result = await pools.db3.request().query(query);
+    res.json(result.recordset);
+  } catch (error) {
+    console.error("Error querying companies:", error);
+    res.status(500).send("An error occurred while querying the companies.");
+  }
+});
+
+app.get("/get-user-short", async (req, res) => {
+  try {
+    // Ensure the db1 pool is initialized
+    if (!pools.db1) {
+      return res.status(500).send("Database connection is not initialized.");
+    }
+
+    // Define the query for UserCompany
+    const query = `
+SELECT DISTINCT 
+  LTRIM(RTRIM(CompShort)) AS ShortCode,
+  LTRIM(RTRIM(CompId)) AS CompId
+FROM [reporting].[dbo].[UserCompany]
+WHERE LTRIM(RTRIM(CompShort)) <> ''
+  AND CompShort IS NOT NULL;
+    `;
     // Execute the query on the db3 pool
     const result = await pools.db3.request().query(query);
 

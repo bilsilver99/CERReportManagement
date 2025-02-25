@@ -1,4 +1,4 @@
 const appInfo = {
-  title: "Consolidated Reporting Systems",
+  title: "Consolidated Reporting System",
 };
 export default appInfo;
